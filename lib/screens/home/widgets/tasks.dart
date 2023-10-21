@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_wise_frontend/models/task.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:task_wise_frontend/screens/detail/detail.dart';
 
 class Tasks extends StatelessWidget {
   const Tasks({super.key});
@@ -36,36 +37,43 @@ class Tasks extends StatelessWidget {
   }
 
   Widget _buildTask(BuildContext context, Task task) {
-    return Container(
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-            color: task.bgColor, borderRadius: BorderRadius.circular(20)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(task.iconData, color: task.iconColor, size: 35),
-            const SizedBox(height: 30),
-            Text(
-              task.title!,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                _buildTaskStatus(
-                    task.btnColor!, task.iconColor!, '${task.left} esquerda'),
-                const SizedBox(width: 5),
-                _buildTaskStatus(
-                    Colors.white, task.iconColor!, '${task.done} feito')
-              ],
-            )
-          ],
-        ));
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => DetailPage(task)));
+      },
+      child: Container(
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+              color: task.bgColor, borderRadius: BorderRadius.circular(20)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(task.iconData, color: task.iconColor, size: 35),
+              const SizedBox(height: 30),
+              Text(
+                task.title!,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  _buildTaskStatus(task.btnColor!, task.iconColor!,
+                      '${task.left} restantes'),
+                  const SizedBox(width: 2),
+                  _buildTaskStatus(
+                      Colors.white, task.iconColor!, '${task.done} feitas')
+                ],
+              )
+            ],
+          )),
+    );
   }
 
   Widget _buildTaskStatus(Color bgColor, Color txColor, String text) {
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 6.8, vertical: 10),
         decoration: BoxDecoration(
             color: bgColor, borderRadius: BorderRadius.circular(20)),
         child: Text(text, style: TextStyle(color: txColor)));
