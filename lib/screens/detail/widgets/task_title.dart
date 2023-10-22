@@ -11,7 +11,7 @@ class TaskTitle extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text(
-            'Tasks',
+            'Tarefas',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           Container(

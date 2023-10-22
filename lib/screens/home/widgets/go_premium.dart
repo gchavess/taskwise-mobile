@@ -12,14 +12,16 @@ class GoPremium extends StatelessWidget {
           margin: const EdgeInsets.all(15),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-              color: Colors.black, borderRadius: BorderRadius.circular(20)),
+              color: Color.fromARGB(255, 0, 71, 178),
+              borderRadius: BorderRadius.circular(20)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 padding: const EdgeInsets.all(5),
                 decoration: const BoxDecoration(
-                    color: Colors.grey, shape: BoxShape.circle),
+                    color: Color.fromARGB(60, 255, 255, 255),
+                    shape: BoxShape.circle),
                 child: const Icon(
                   Icons.star,
                   color: Colors.white,
@@ -40,7 +42,7 @@ class GoPremium extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text(
                     'Ganhe acesso ilimitado\na todas as nossas ferramentas.',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    style: TextStyle(fontSize: 16, color: Colors.white),
                   )
                 ],
               )
@@ -53,7 +55,7 @@ class GoPremium extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-                color: Colors.blueAccent,
+                color: const Color.fromARGB(60, 255, 255, 255),
                 borderRadius: BorderRadius.circular(15)),
             child: const Icon(
               Icons.arrow_forward,

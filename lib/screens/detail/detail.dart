@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:task_wise_frontend/models/task.dart';
 import 'package:task_wise_frontend/screens/detail/widgets/date_picker.dart';
+import 'package:task_wise_frontend/screens/detail/widgets/task_title.dart';
+import 'package:task_wise_frontend/screens/detail/widgets/task_timeline.dart';
 
 class DetailPage extends StatelessWidget {
   final Task task;
@@ -8,6 +10,7 @@ class DetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final detialList = task.desc;
     return Scaffold(
         backgroundColor: Colors.black,
         body: CustomScrollView(
@@ -23,12 +26,23 @@ class DetailPage extends StatelessWidget {
                     )),
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    DatePicker(),
-                  ],
+                  children: [DatePicker(), TaskTitle()],
                 ),
               ),
-            )
+            ),
+            detialList == null
+                ? SliverFillRemaining(
+                    child: Container(
+                      color: Colors.white,
+                      child: Center(child: Text('Sem tarefas para hoje!')),
+                    ),
+                  )
+                : SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (_, index) => TaskTimeline(detialList[index]),
+                      childCount: detialList.length,
+                    ),
+                  ),
           ],
         ));
   }

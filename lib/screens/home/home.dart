@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(15),
             child: const Text(
-              'Tasks',
+              'Metas',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
           ),

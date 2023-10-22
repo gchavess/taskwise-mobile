@@ -8,16 +8,28 @@ class Tasks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tasksList = Task.generateTasks();
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: GridView.builder(
-          itemCount: tasksList.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
-          itemBuilder: (context, index) => tasksList[index].isLast
-              ? _buildAddTask()
-              : _buildTask(context, tasksList[index])),
+    return FutureBuilder<List<Task>>(
+      future: Task.generateTasks(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(); // Show a loading indicator while data is being fetched.
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          final tasksList = snapshot.data;
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: GridView.builder(
+              itemCount: tasksList!.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
+              itemBuilder: (context, index) => tasksList[index].isLast
+                  ? _buildAddTask()
+                  : _buildTask(context, tasksList[index]),
+            ),
+          ); // Remove the extra semicolon here
+        }
+      },
     );
   }
 
