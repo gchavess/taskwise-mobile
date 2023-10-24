@@ -12,7 +12,7 @@ class Tasks extends StatelessWidget {
       future: Task.generateTasks(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Show a loading indicator while data is being fetched.
+          return const CircularProgressIndicator(); // Show a loading indicator while data is being fetched.
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -22,7 +22,7 @@ class Tasks extends StatelessWidget {
             child: GridView.builder(
               itemCount: tasksList!.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                  crossAxisCount: 1, crossAxisSpacing: 10, mainAxisSpacing: 10),
               itemBuilder: (context, index) => tasksList[index].isLast
                   ? _buildAddTask()
                   : _buildTask(context, tasksList[index]),
@@ -55,20 +55,20 @@ class Tasks extends StatelessWidget {
             .push(MaterialPageRoute(builder: (context) => DetailPage(task)));
       },
       child: Container(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
               color: task.bgColor, borderRadius: BorderRadius.circular(20)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(task.iconData, color: task.iconColor, size: 35),
-              const SizedBox(height: 30),
+              Icon(task.iconData, color: task.iconColor, size: 2.3),
+              const SizedBox(height: 20),
               Text(
                 task.title!,
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
               Row(
                 children: [
                   _buildTaskStatus(task.btnColor!, task.iconColor!,
@@ -85,7 +85,7 @@ class Tasks extends StatelessWidget {
 
   Widget _buildTaskStatus(Color bgColor, Color txColor, String text) {
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6.8, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         decoration: BoxDecoration(
             color: bgColor, borderRadius: BorderRadius.circular(20)),
         child: Text(text, style: TextStyle(color: txColor)));

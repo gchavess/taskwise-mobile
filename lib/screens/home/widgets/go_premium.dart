@@ -12,7 +12,7 @@ class GoPremium extends StatelessWidget {
           margin: const EdgeInsets.all(15),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-              color: Color.fromARGB(255, 0, 71, 178),
+              color: const Color.fromARGB(255, 0, 71, 178),
               borderRadius: BorderRadius.circular(20)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,17 +29,17 @@ class GoPremium extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 15),
-              Column(
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "Seja Premium!",
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   Text(
                     'Ganhe acesso ilimitado\na todas as nossas ferramentas.',
                     style: TextStyle(fontSize: 16, color: Colors.white),

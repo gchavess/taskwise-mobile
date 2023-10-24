@@ -3,13 +3,13 @@ import 'package:timeline_tile/timeline_tile.dart';
 
 class TaskTimeline extends StatelessWidget {
   final Map<String, dynamic> detail;
-  TaskTimeline(this.detail);
+  const TaskTimeline(this.detail, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Row(
         children: [
           _buildTimeline(detail['tlColor']),
@@ -39,31 +39,31 @@ class TaskTimeline extends StatelessWidget {
       width: 250,
       decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topRight: Radius.circular(10),
             bottomLeft: Radius.circular(10),
             bottomRight: Radius.circular(10),
           )),
-      padding: EdgeInsets.all(15),
-      margin: EdgeInsets.all(5),
+      padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.all(5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 10),
-          Text(slot, style: TextStyle(color: Colors.grey)),
+          const SizedBox(height: 10),
+          Text(slot, style: const TextStyle(color: Colors.grey)),
         ],
       ),
     );
   }
 
   Widget _buildTimeline(Color color) {
-    return Container(
+    return SizedBox(
       height: 80,
-      width: 200,
+      width: 20,
       child: TimelineTile(
           alignment: TimelineAlign.manual,
           lineXY: 0,

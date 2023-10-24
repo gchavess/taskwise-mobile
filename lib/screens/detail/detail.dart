@@ -10,9 +10,9 @@ class DetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final detialList = task.desc;
+    final detailList = task.desc;
     return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: const Color.fromARGB(255, 0, 71, 178),
         body: CustomScrollView(
           slivers: [
             _buildAppBar(context),
@@ -30,17 +30,16 @@ class DetailPage extends StatelessWidget {
                 ),
               ),
             ),
-            detialList == null
+            detailList == null
                 ? SliverFillRemaining(
                     child: Container(
                       color: Colors.white,
-                      child: Center(child: Text('Sem tarefas para hoje!')),
                     ),
                   )
                 : SliverList(
                     delegate: SliverChildBuilderDelegate(
-                      (_, index) => TaskTimeline(detialList[index]),
-                      childCount: detialList.length,
+                      (_, index) => TaskTimeline(detailList[index]),
+                      childCount: detailList.length,
                     ),
                   ),
           ],
@@ -50,9 +49,10 @@ class DetailPage extends StatelessWidget {
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
       expandedHeight: 90,
-      backgroundColor: Colors.black,
+      backgroundColor: const Color.fromARGB(255, 0, 71, 178),
       leading: IconButton(
-          onPressed: () => Navigator.of(context).pop,
+          //padding: ,
+          onPressed: () => Navigator.of(context).pop(null),
           icon: const Icon(Icons.arrow_back_ios),
           iconSize: 20),
       actions: const [
@@ -69,13 +69,14 @@ class DetailPage extends StatelessWidget {
             Text(
               '${task.title} Tasks',
               style: const TextStyle(
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 5),
             Text(
               'Você tem ${task.left} Tasks para hoje!',
-              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+              style: TextStyle(fontSize: 10, color: Colors.grey[500]),
             )
           ],
         ),

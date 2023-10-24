@@ -63,7 +63,7 @@ class HomePage extends StatelessWidget {
           backgroundColor: Colors.white,
           showSelectedLabels: false,
           showUnselectedLabels: false,
-          selectedItemColor: Colors.blueAccent,
+          selectedItemColor: const Color.fromARGB(255, 0, 71, 178),
           unselectedItemColor: Colors.grey.withOpacity(0.5),
           items: const [
             BottomNavigationBarItem(
