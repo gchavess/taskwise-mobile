@@ -32,56 +32,32 @@ class Task {
 
     final data = json.decode(response.body);
 
-    List<Task> tasks = (data as List).map((taskData) {
+    List<Task> goals = (data as List).map((goalData) {
+      List<Map<String, dynamic>> taskData =
+          (goalData['tasks'] as List).map((task) {
+        return {
+          'title': task['titulo'] ?? "N/A",
+          'time': task['hora_inicio'],
+          'slot': '${task['hora_inicio']} - ${task['hora_fim']}',
+          'tlColor': kRedDark,
+          'bgColor': kRedLight,
+        };
+      }).toList();
+
       return Task(
-          iconData: Icons.cases_rounded,
-          title: taskData['titulo'],
-          bgColor: kRedLight, // Defina a cor desejada
-          iconColor: kRedDark, // Defina a cor desejada
-          btnColor: kRed, // Defina a cor desejada
-          left: taskData['progresso'],
-          done: taskData['concluido'] ? 1 : 0,
-          desc: [
-            {
-              'time': '9:00 am',
-              'title': 'Teste',
-              'slot': '9:00 - 10:00 am',
-              'tlColor': kRedDark,
-              'bgColor': kRedLight,
-            },
-            {
-              'time': '10:00 am',
-              'title': 'Teste 02',
-              'slot': '10:00 - 12:00 am',
-              'tlColor': kBlueDark,
-              'bgColor': kBlueLight,
-            },
-            {
-              'time': '12:00 pm',
-              'title': 'Teste 03',
-              'slot': '1:00 - 2:00 pm',
-              'tlColor': Colors.grey.withOpacity(0.3),
-              'bgColor': Colors.grey.withOpacity(0.3),
-            },
-            {
-              'time': '1:00 pm',
-              'title': '',
-              'slot': '',
-              'tlColor': kYellowDark,
-              'bgColor': kYellowLight,
-            },
-            {
-              'time': '2:00 pm',
-              'title': '',
-              'slot': '',
-              'tlColor': Colors.grey.withOpacity(0.3),
-              'bgColor': Colors.grey.withOpacity(0.3),
-            },
-          ]);
+        iconData: Icons.cases_rounded,
+        title: goalData['titulo'],
+        bgColor: kRedLight,
+        iconColor: kRedDark,
+        btnColor: kRed,
+        left: goalData['progresso'],
+        done: goalData['concluido'] ? 1 : 0,
+        desc: taskData,
+      );
     }).toList();
 
-    tasks.add(Task(isLast: true));
+    goals.add(Task(isLast: true));
 
-    return tasks;
+    return goals;
   }
 }
