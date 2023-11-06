@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage();
+class SignUpPage extends StatefulWidget {
+  const SignUpPage();
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _SignUpPageState createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController? _usernameController = TextEditingController();
   TextEditingController? _emailController = TextEditingController();
@@ -65,25 +65,18 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: 20),
                     _buildRoundedTextField(
+                      controller: _usernameController,
+                      labelText: 'Nome Completo',
+                      detailColor: inputDetailColor,
+                    ),
+                    SizedBox(height: 20),
+                    _buildRoundedTextField(
                       controller: _passwordController,
                       labelText: 'Senha',
                       isPassword: true,
                       detailColor: inputDetailColor,
                     ),
                     SizedBox(height: 20),
-                    Align(
-                      alignment:
-                          Alignment.centerRight, // Align text to the left
-                      child: Text(
-                        'Esqueceu sua senha?', // Text above the email field
-                        style: TextStyle(
-                          color: inputDetailColor, // Set the text color to pink
-                          fontWeight: FontWeight.bold, // Set the text to bold
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-
                     ElevatedButton(
                       onPressed: _submitForm,
                       child: Container(
@@ -108,29 +101,25 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                    Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: 110.0), // Adiciona padding-top de 100.0
-                          child: Text('Não tem uma conta?'),
-                        ),
-                        Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Inscrever-se no Taskwise',
-                                style: TextStyle(
-                                  color: Color(
-                                      0xFFFF0047B2), // Define a cor do texto como rosa
-                                  decoration: TextDecoration
-                                      .underline, // Adiciona sublinhado
-                                ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 100.0), // Adiciona padding-top de 20px
+                      child: Text.rich(
+                        TextSpan(
+                          text: 'Já tem uma conta? ',
+                          children: [
+                            TextSpan(
+                              text: 'Faça login',
+                              style: TextStyle(
+                                color: Color(
+                                    0xFFFF0047B2), // Define a cor do texto como rosa
+                                decoration: TextDecoration
+                                    .underline, // Adiciona sublinhado
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     )
                   ],
                 ),
