@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:task_wise_frontend/screens/login/login_screen.dart';
 import 'package:task_wise_frontend/screens/home/home.dart';
+import 'package:task_wise_frontend/screens/login/sign_in_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -17,7 +18,7 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Task Wise',
-      home: HomePage(),
+      home: SignInPage(),
     );
   }
 }
