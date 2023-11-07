@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_wise_frontend/screens/home/widgets/go_premium.dart';
-import 'package:task_wise_frontend/screens/home/widgets/tasks.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -8,101 +7,81 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: _buildAppBar(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const GoPremium(),
-          Container(
-            padding: const EdgeInsets.all(15),
-            child: const Text(
-              'Metas',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
+        backgroundColor: const Color.fromARGB(255, 0, 71, 178),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 50),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Stack(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              InkWell(
+                                onTap: () {},
+                                child: const Icon(
+                                  Icons.notifications_rounded,
+                                  color: Colors.white,
+                                  size: 40,
+                                ),
+                              )
+                            ],
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                CircleAvatar(
+                                  radius: 35,
+                                  backgroundImage:
+                                      AssetImage('imagemTeste.jpg'),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Atividade',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 20, color: Colors.white),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 100),
+              Container(
+                height: MediaQuery.of(context).size.height,
+                width: double.infinity,
+                padding: const EdgeInsets.only(
+                  top: 20,
+                  left: 15,
+                ),
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50))),
+              )
+            ],
           ),
-          const Expanded(
-            child: Tasks(),
-          )
-        ],
-      ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          elevation: 0,
-          backgroundColor: Colors.black,
-          onPressed: () {},
-          child: const Icon(
-            Icons.add,
-            size: 35,
-          )),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                spreadRadius: 5,
-                blurRadius: 10)
-          ]),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-        child: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          selectedItemColor: const Color.fromARGB(255, 0, 71, 178),
-          unselectedItemColor: Colors.grey.withOpacity(0.5),
-          items: const [
-            BottomNavigationBarItem(
-                label: 'Tela Principal',
-                icon: Icon(Icons.home_rounded, size: 30)),
-            BottomNavigationBarItem(
-                label: 'Seu Perfil', icon: Icon(Icons.person_rounded, size: 30))
-          ],
-        ),
-      ),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
-      title: Row(
-        children: [
-          Container(
-            height: 45,
-            width: 45,
-            margin: const EdgeInsets.only(left: 15),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset("imagemTeste.jpeg"),
-            ),
-          ),
-          const SizedBox(width: 10),
-          const Text(
-            "Olá, Guilherme!",
-            style: TextStyle(
-                color: Colors.black, fontSize: 26, fontWeight: FontWeight.bold),
-          )
-        ],
-      ),
-      actions: const [
-        Icon(Icons.more_vert, color: Colors.black, size: 40),
-      ],
-    );
+        ));
   }
 }

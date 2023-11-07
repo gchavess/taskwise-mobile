@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:task_wise_frontend/models/task.dart';
-import 'package:task_wise_frontend/screens/detail/widgets/date_picker.dart';
-import 'package:task_wise_frontend/screens/detail/widgets/task_title.dart';
-import 'package:task_wise_frontend/screens/detail/widgets/task_timeline.dart';
+import 'package:task_wise_frontend/screens/goals/detail/widgets/date_picker.dart';
+import 'package:task_wise_frontend/screens/goals/detail/widgets/task_title.dart';
+import 'package:task_wise_frontend/screens/goals/detail/widgets/task_timeline.dart';
 
 class DetailPage extends StatelessWidget {
   final Task task;

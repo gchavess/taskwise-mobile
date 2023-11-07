@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_wise_frontend/models/task.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:task_wise_frontend/screens/detail/detail.dart';
+import 'package:task_wise_frontend/screens/goals/detail/detail.dart';
 
 class Tasks extends StatelessWidget {
   const Tasks({super.key});
