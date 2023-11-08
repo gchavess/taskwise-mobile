@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
                     Align(
                       alignment: Alignment.centerLeft, // Align text to the left
                       child: Text(
-                        'Criar Conta', // Text above the email field
+                        'Fazer Login.', // Text above the email field
                         style: TextStyle(
                           color: textColor, // Set the text color to pink
                           fontWeight: FontWeight.bold, // Set the text to bold
@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
                             50.0, // Set the button's height to the desired value
                         child: Center(
                           child: Text(
-                            'Inscreva-se agora',
+                            'Entrar',
                             style: TextStyle(
                               fontSize:
                                   16, // You can adjust the text size if needed
@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        primary: pageDetailColor,
+                        backgroundColor: pageDetailColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),

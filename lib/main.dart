@@ -17,7 +17,7 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Task Wise',
-      home: SplashScreen(),
+      home: HomePage(),
     );
   }
 }
