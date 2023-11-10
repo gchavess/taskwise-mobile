@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:dio/dio.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage();
@@ -15,16 +18,34 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Color pageDetailColor = Color(0xFF0047B2);
   Color inputDetailColor = Color(0xFF0047B2);
-  Color textColor =
-      Color.fromARGB(255, 63, 63, 63); // Color for text field details
+  Color textColor = Color.fromARGB(255, 63, 63, 63);
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       if (_usernameController != null &&
           _emailController != null &&
           _passwordController != null) {
-        // You can access the controller's text using _usernameController.text, _emailController.text, and _passwordController.text here
-        // You can proceed with registration or any other logic here
+        Map<String, dynamic> requestBody = {
+          'nome': _usernameController?.text,
+          'email': _emailController?.text,
+          'senha': _passwordController?.text,
+        };
+
+        Dio dio = Dio();
+
+        String requestBodyJson = jsonEncode(requestBody);
+
+        try {
+          Response response = await dio.post(
+            'https://taskwise-backend.cyclic.cloud/users',
+            data: requestBodyJson,
+            options: Options(
+              headers: {'Content-Type': 'application/json'},
+            ),
+          );
+        } catch (e) {
+          print('Erro ao fazer a requisição: $e');
+        }
       }
     }
   }

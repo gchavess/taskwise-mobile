@@ -13,7 +13,7 @@ dependencies:
   http: ^0.13.3
   timeline_tile: ^2.0.0
   google_fonts: ^4.0.4
-
+  dio: ^4.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
