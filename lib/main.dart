@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:task_wise_frontend/screens/goals/create_goals.dart';
+import 'package:task_wise_frontend/screens/goals/my_goals.dart';
 import 'package:task_wise_frontend/screens/home/home.dart';
 import 'package:task_wise_frontend/screens/login/splash_screen.dart';
 

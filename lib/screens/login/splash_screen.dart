@@ -49,11 +49,19 @@ class SplashScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => const LoginPage()));
               },
               style: const ButtonStyle(
+                
                 backgroundColor: MaterialStatePropertyAll<Color>(
                   Color.fromARGB(255, 0, 71, 178),
                 ),
+                minimumSize: MaterialStatePropertyAll<Size>(
+                  Size(300, 50), // Largura definida como infinita (expande para preencher o espaço disponível)
+                  ),
+                ),
+              child: const Text('Começar',
+              style: TextStyle(
+                fontSize: 16 
+                ),
               ),
-              child: const Text('Começar'),
             ),
           ],
         ),
