@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:task_wise_frontend/screens/home/home.dart';
+import 'package:dio/dio.dart';
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:task_wise_frontend/providers/app_state.dart';
+import 'package:flutter/gestures.dart';
+import 'package:task_wise_frontend/screens/login/sign_up_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage();
@@ -18,13 +25,48 @@ class _LoginPageState extends State<LoginPage> {
   Color textColor =
       Color.fromARGB(255, 63, 63, 63); // Color for text field details
 
-  void _submitForm() {
+  void _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      if (_usernameController != null &&
-          _emailController != null &&
-          _passwordController != null) {
-        // You can access the controller's text using _usernameController.text, _emailController.text, and _passwordController.text here
-        // You can proceed with registration or any other logic here
+      final String? email = _emailController?.text;
+      final String? senha = _passwordController?.text;
+
+      if (email != null && senha != null) {
+        Map<String, dynamic> requestBody = {
+          'email': email,
+          'senha': senha,
+        };
+
+        Dio dio = Dio();
+
+        String requestBodyJson = jsonEncode(requestBody);
+
+        try {
+          Response response = await dio.post(
+            'https://taskwise-backend.cyclic.cloud/login',
+            data: requestBodyJson,
+            options: Options(
+              headers: {'Content-Type': 'application/json'},
+            ),
+          );
+
+          if (response.statusCode == 200) {
+            final appState = Provider.of<AppState>(context, listen: false);
+            appState.setResponseData(response.data['user']['nome'].toString());
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(
+                  userName: response.data['user']['nome'].toString(),
+                ),
+              ),
+            );
+          }
+
+          print('Corpo da resposta: ${response.data}');
+        } catch (e) {
+          print('Erro ao fazer a requisição: $e');
+        }
       }
     }
   }
@@ -85,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(height: 20),
 
                     ElevatedButton(
-                      onPressed: _submitForm,
+                      onPressed: () => _submitForm(context),
                       child: Container(
                         width: double
                             .infinity, // Set the button's width to match the parent
@@ -126,6 +168,15 @@ class _LoginPageState extends State<LoginPage> {
                                   decoration: TextDecoration
                                       .underline, // Adiciona sublinhado
                                 ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    // Adicione o código para navegar para a SignUpPage
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SignUpPage()),
+                                    );
+                                  },
                               ),
                             ],
                           ),

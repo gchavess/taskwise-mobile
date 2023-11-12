@@ -3,7 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:task_wise_frontend/screens/goals/my_goals.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final String userName;
+
+  const HomePage({
+    Key? key,
+    required this.userName,
+  }) : super(key: key);
 
   Widget buildProfileSection() {
     return Row(
@@ -40,7 +45,7 @@ class HomePage extends StatelessWidget {
 
   Widget buildGreetingText() {
     return Text(
-      'Olá, Fulano!',
+      'Olá, ${userName}!',
       style: GoogleFonts.poppins(
         fontSize: 20,
         color: Colors.white,

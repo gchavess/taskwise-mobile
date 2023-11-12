@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/gestures.dart';
+import 'package:task_wise_frontend/screens/login/login_screen.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage();
@@ -137,6 +139,15 @@ class _SignUpPageState extends State<SignUpPage> {
                                 decoration: TextDecoration
                                     .underline, // Adiciona sublinhado
                               ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  // Adicione o código para navegar para a SignUpPage
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginPage()),
+                                  );
+                                },
                             ),
                           ],
                         ),
