@@ -12,6 +12,7 @@ class HomePage extends StatelessWidget {
 
   Widget buildProfileSection() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         InkWell(
@@ -28,20 +29,19 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget buildAvatar() {
-    return const Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(
-              left: 20, top: 0, right: 5), // Ajuste a margem superior
-          child: CircleAvatar(
-            radius: 35,
-            backgroundImage: AssetImage('imagemTeste.jpg'),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget buildAvatar() {
+  //   return const Row(
+  //     mainAxisAlignment: MainAxisAlignment.end,
+  //     children: [
+  //       Align(
+  //         child: CircleAvatar(
+  //           radius: 35,
+  //           backgroundImage: AssetImage('imagemTeste.jpg'),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget buildGreetingText() {
     return Text(
@@ -139,43 +139,88 @@ class HomePage extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              buildInkWell(),
-              buildInkWell(),
-              buildInkWell(),
-            ],
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Metas',
+              style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  color: const Color.fromARGB(255, 45, 45, 45),
+                  fontWeight: FontWeight.bold),
+            ),
           ),
           const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              buildInkWell(),
-              buildInkWell(),
-              buildInkWell(),
-            ],
+          SizedBox(
+            height: 100, // Ajuste conforme necessário
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                buildInkWell('Meta 01', const Color.fromARGB(255, 255, 88, 88),
+                    '1 de 1'),
+                buildInkWell('Meta 02', const Color.fromARGB(255, 30, 214, 255),
+                    '1 de 1'),
+                buildInkWell(
+                    'Meta 03', const Color.fromARGB(255, 0, 163, 36), '1 de 1'),
+              ],
+            ),
+          ),
+          const SizedBox(height: 5),
+          SizedBox(
+            height: 95, // Ajuste conforme necessário
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                buildInkWell(
+                    'Meta 04', const Color.fromARGB(255, 66, 66, 66), '1 de 1'),
+                buildInkWell('Meta 05', const Color.fromARGB(255, 255, 175, 54),
+                    '1 de 1'),
+                buildInkWell('Meta 06', const Color.fromARGB(255, 165, 0, 148),
+                    '1 de 1'),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget buildInkWell() {
+  Widget buildInkWell(String label, Color color, String progressText) {
     return InkWell(
       onTap: () {
         // Lidar com o toque no InkWell
       },
       child: Container(
-        width: 95,
-        height: 95,
-        color: Colors.blue,
+        width: 88,
+        height: 88,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(9),
+        ),
         margin: const EdgeInsets.all(5),
-        child: const Center(
-          child: Text(
-            'Item',
-            style: TextStyle(color: Colors.white),
-          ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 12, left: 6),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  label,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.only(top: 12, left: 6),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  progressText,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -192,7 +237,7 @@ class HomePage extends StatelessWidget {
             buildProfileSection(),
             Row(
               children: [
-                buildAvatar(),
+                //buildAvatar(),
                 const SizedBox(
                   width: 45,
                 ),
@@ -216,14 +261,14 @@ class HomePage extends StatelessWidget {
             Container(
               color: Colors.white, // Cor do fundo branco
               width: double.infinity,
-              height: 275,
+              height: 290,
               child: buildWhiteRectangle(),
             ),
             Container(
               color: Colors.white, // Cor do fundo branco
               width: double.infinity,
-              height: 275,
-            )
+              height: 280,
+            ),
           ],
         ),
       ),
