@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task_wise_frontend/screens/goals/my_goals.dart';
 
 class HomePage extends StatelessWidget {
   final String userName;
@@ -28,20 +27,6 @@ class HomePage extends StatelessWidget {
       ],
     );
   }
-
-  // Widget buildAvatar() {
-  //   return const Row(
-  //     mainAxisAlignment: MainAxisAlignment.end,
-  //     children: [
-  //       Align(
-  //         child: CircleAvatar(
-  //           radius: 35,
-  //           backgroundImage: AssetImage('imagemTeste.jpg'),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
 
   Widget buildGreetingText() {
     return Text(
@@ -103,7 +88,7 @@ class HomePage extends StatelessWidget {
 
   Widget buildButtonsRow() {
     return SizedBox(
-      height: 100, // Defina a altura desejada para a Row
+      height: 100,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,71 +100,74 @@ class HomePage extends StatelessWidget {
               const Color.fromARGB(255, 0, 71, 178), () {}),
           const SizedBox(width: 18),
           buildButton('Metas', Icons.layers_outlined,
-              const Color.fromARGB(255, 0, 71, 178), () => const MyGoals()),
+              const Color.fromARGB(255, 0, 71, 178), () {}),
         ],
       ),
     );
   }
 
-  Widget buildWhiteRectangle() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      margin: const EdgeInsets.only(top: 25, left: 25, right: 22),
-      padding: const EdgeInsets.all(15),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: Text(
-              'Metas',
-              style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  color: const Color.fromARGB(255, 45, 45, 45),
-                  fontWeight: FontWeight.bold),
+  Widget buildGoalsRectangle() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 3),
             ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 100, // Ajuste conforme necessário
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                buildInkWell('Meta 01', const Color.fromARGB(255, 255, 88, 88),
-                    '1 de 1'),
-                buildInkWell('Meta 02', const Color.fromARGB(255, 30, 214, 255),
-                    '1 de 1'),
-                buildInkWell(
-                    'Meta 03', const Color.fromARGB(255, 0, 163, 36), '1 de 1'),
-              ],
+          ],
+        ),
+        margin: const EdgeInsets.only(top: 25, left: 25, right: 22),
+        padding:
+            const EdgeInsets.only(top: 17, left: 20, right: 15, bottom: 12),
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                'Metas',
+                style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    color: const Color.fromARGB(255, 45, 45, 45),
+                    fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          const SizedBox(height: 5),
-          SizedBox(
-            height: 95, // Ajuste conforme necessário
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                buildInkWell(
-                    'Meta 04', const Color.fromARGB(255, 66, 66, 66), '1 de 1'),
-                buildInkWell('Meta 05', const Color.fromARGB(255, 255, 175, 54),
-                    '1 de 1'),
-                buildInkWell('Meta 06', const Color.fromARGB(255, 165, 0, 148),
-                    '1 de 1'),
-              ],
+            const SizedBox(height: 7),
+            SizedBox(
+              height: 100,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  buildInkWell('Meta 01',
+                      const Color.fromARGB(255, 255, 88, 88), '1 de 1'),
+                  buildInkWell('Meta 02',
+                      const Color.fromARGB(255, 30, 214, 255), '1 de 1'),
+                  buildInkWell('Meta 03', const Color.fromARGB(255, 0, 163, 36),
+                      '1 de 1'),
+                ],
+              ),
             ),
-          ),
-        ],
+            SizedBox(
+              height: 100,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  buildInkWell('Meta 04', const Color.fromARGB(255, 66, 66, 66),
+                      '1 de 1'),
+                  buildInkWell('Meta 05',
+                      const Color.fromARGB(255, 255, 175, 54), '1 de 1'),
+                  buildInkWell('Meta 06',
+                      const Color.fromARGB(255, 165, 0, 148), '1 de 1'),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -196,7 +184,7 @@ class HomePage extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(9),
         ),
-        margin: const EdgeInsets.all(5),
+        margin: const EdgeInsets.all(7),
         child: Column(
           children: [
             Padding(
@@ -226,6 +214,70 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  Widget buildTasksRectangle() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        margin: const EdgeInsets.only(top: 20, left: 25, right: 22, bottom: 50),
+        padding:
+            const EdgeInsets.only(top: 10, left: 15, right: 15, bottom: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                'Tarefas do dia',
+                style: GoogleFonts.poppins(
+                  fontSize: 22,
+                  color: const Color.fromARGB(255, 45, 45, 45),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 1),
+            buildTaskWithCheckbox('Tarefa 1'),
+            buildTaskWithCheckbox('Tarefa 2'),
+            buildTaskWithCheckbox('Tarefa 3'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildTaskWithCheckbox(String task) {
+    bool isChecked = false;
+
+    return Row(
+      children: [
+        Checkbox(
+          value: isChecked,
+          onChanged: (value) {},
+        ),
+        const SizedBox(width: 10),
+        Text(
+          task,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -233,22 +285,25 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 50),
+            const SizedBox(height: 25),
             buildProfileSection(),
+            const SizedBox(
+                height:
+                    20), // Adicionando espaço de 20 pixels no final do primeiro container
             Row(
               children: [
                 //buildAvatar(),
                 const SizedBox(
-                  width: 45,
+                  width: 35,
                 ),
                 buildGreetingText(),
               ],
             ),
-            const SizedBox(height: 100),
+            const SizedBox(height: 60),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.only(
-                  top: 30, left: 20, right: 20, bottom: 20),
+                  top: 30, left: 20, right: 20, bottom: 15),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -261,13 +316,14 @@ class HomePage extends StatelessWidget {
             Container(
               color: Colors.white, // Cor do fundo branco
               width: double.infinity,
-              height: 290,
-              child: buildWhiteRectangle(),
+              height: 305,
+              child: buildGoalsRectangle(),
             ),
             Container(
               color: Colors.white, // Cor do fundo branco
               width: double.infinity,
-              height: 280,
+              height: double.infinity,
+              child: buildTasksRectangle(),
             ),
           ],
         ),
