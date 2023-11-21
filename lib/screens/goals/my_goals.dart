@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_wise_frontend/screens/goals/create_goals.dart';
 
 class MyGoals extends StatelessWidget {
   const MyGoals({super.key});
@@ -27,7 +28,10 @@ class MyGoals extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => Navigator.of(context).pop(null),
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CreateGoals())),
                   icon: const Icon(Icons.add),
                   iconSize: 45,
                 ),
@@ -37,10 +41,7 @@ class MyGoals extends StatelessWidget {
               child: Center(
                 child: Text(
                   'Não há metas criadas!',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
                 ),
               ),
             ),
