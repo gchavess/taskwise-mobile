@@ -71,10 +71,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     Align(
                       alignment: Alignment.centerLeft, // Align text to the left
                       child: Text(
-                        'Criar Conta', // Text above the email field
+                        'Criar conta', // Text above the email field
                         style: TextStyle(
                           color: textColor, // Set the text color to pink
                           fontWeight: FontWeight.bold, // Set the text to bold
+                          fontSize: 22
                         ),
                       ),
                     ),
@@ -83,13 +84,13 @@ class _SignUpPageState extends State<SignUpPage> {
                             16), // Space between the text and the email field
                     _buildRoundedTextField(
                       controller: _emailController,
-                      labelText: 'Email',
+                      labelText: 'E-mail',
                       detailColor: inputDetailColor,
                     ),
                     SizedBox(height: 20),
                     _buildRoundedTextField(
                       controller: _usernameController,
-                      labelText: 'Nome Completo',
+                      labelText: 'Nome',
                       detailColor: inputDetailColor,
                     ),
                     SizedBox(height: 20),
@@ -99,7 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       isPassword: true,
                       detailColor: inputDetailColor,
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: _submitForm,
                       child: Container(
@@ -112,7 +113,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             'Inscreva-se agora',
                             style: TextStyle(
                               fontSize:
-                                  16, // You can adjust the text size if needed
+                                  19, // You can adjust the text size if needed
                             ),
                           ),
                         ),
@@ -132,7 +133,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           text: 'Já tem uma conta? ',
                           children: [
                             TextSpan(
-                              text: 'Faça login',
+                              text: 'Faça login.',
                               style: TextStyle(
                                 color: Color(
                                     0xFFFF0047B2), // Define a cor do texto como rosa

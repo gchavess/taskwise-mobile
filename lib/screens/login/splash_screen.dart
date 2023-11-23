@@ -23,7 +23,7 @@ class SplashScreen extends StatelessWidget {
               ),
             ),
             const Text(
-              'Começe sua jornada produtiva!',
+              'Comece sua jornada produtiva!',
               style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.w800,
@@ -35,31 +35,37 @@ class SplashScreen extends StatelessWidget {
             const Text(
               'Transforme cada momento em uma \nconquista. Desperte seu potencial\ncom o TaskWise.',
               style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 15.5,
                   color: Colors.black,
                   fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
             const SizedBox(
-              height: 10,
+              height: 32,
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => const LoginPage()));
               },
-              style: const ButtonStyle(
-                
-                backgroundColor: MaterialStatePropertyAll<Color>(
+          
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
                   Color.fromARGB(255, 0, 71, 178),
                 ),
-                minimumSize: MaterialStatePropertyAll<Size>(
-                  Size(300, 50), // Largura definida como infinita (expande para preencher o espaço disponível)
+                minimumSize: MaterialStateProperty.all<Size>(
+                  Size(300, 50),
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0), // Ajuste o valor conforme necessário
                   ),
                 ),
+              ),
+
               child: const Text('Começar',
               style: TextStyle(
-                fontSize: 16 
+                fontSize: 19 
                 ),
               ),
             ),

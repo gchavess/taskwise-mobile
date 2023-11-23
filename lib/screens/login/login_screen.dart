@@ -90,10 +90,11 @@ class _LoginPageState extends State<LoginPage> {
                     Align(
                       alignment: Alignment.centerLeft, // Align text to the left
                       child: Text(
-                        'Fazer Login.', // Text above the email field
+                        'Entrar no TaskWise', // Text above the email field
                         style: TextStyle(
                           color: textColor, // Set the text color to pink
                           fontWeight: FontWeight.bold, // Set the text to bold
+                          fontSize: 22
                         ),
                       ),
                     ),
@@ -102,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                             16), // Space between the text and the email field
                     _buildRoundedTextField(
                       controller: _emailController,
-                      labelText: 'Email',
+                      labelText: 'E-mail',
                       detailColor: inputDetailColor,
                     ),
                     SizedBox(height: 20),
@@ -121,6 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(
                           color: inputDetailColor, // Set the text color to pink
                           fontWeight: FontWeight.bold, // Set the text to bold
+                          fontSize: 16
                         ),
                       ),
                     ),
@@ -138,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                             'Entrar',
                             style: TextStyle(
                               fontSize:
-                                  16, // You can adjust the text size if needed
+                                  19, // You can adjust the text size if needed
                             ),
                           ),
                         ),
@@ -161,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                           TextSpan(
                             children: [
                               TextSpan(
-                                text: 'Inscrever-se no Taskwise',
+                                text: 'Inscrever-se no Taskwise.',
                                 style: TextStyle(
                                   color: Color(
                                       0xFFFF0047B2), // Define a cor do texto como rosa
