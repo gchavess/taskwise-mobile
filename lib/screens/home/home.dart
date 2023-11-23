@@ -230,7 +230,7 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
-        margin: const EdgeInsets.only(top: 20, left: 25, right: 22, bottom: 50),
+        margin: const EdgeInsets.only(top: 20, left: 25, right: 22, bottom: 40),
         padding:
             const EdgeInsets.only(top: 10, left: 15, right: 15, bottom: 12),
         child: Column(
@@ -284,12 +284,11 @@ class HomePage extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 0, 71, 178),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 25),
             buildProfileSection(),
-            const SizedBox(
-                height:
-                    20), // Adicionando espaço de 20 pixels no final do primeiro container
+            const SizedBox(height: 20),
             Row(
               children: [
                 //buildAvatar(),
@@ -301,7 +300,6 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 60),
             Container(
-              width: double.infinity,
               padding: const EdgeInsets.only(
                   top: 30, left: 20, right: 20, bottom: 15),
               decoration: const BoxDecoration(
@@ -315,14 +313,11 @@ class HomePage extends StatelessWidget {
             ),
             Container(
               color: Colors.white, // Cor do fundo branco
-              width: double.infinity,
               height: 305,
               child: buildGoalsRectangle(),
             ),
             Container(
               color: Colors.white, // Cor do fundo branco
-              width: double.infinity,
-              height: double.infinity,
               child: buildTasksRectangle(),
             ),
           ],
