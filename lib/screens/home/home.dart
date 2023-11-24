@@ -1,13 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task_wise_frontend/screens/goals/my_goals.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:intl/intl.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final String userName;
+  final String userId;
+  final String userToken;
 
   const HomePage({
     Key? key,
     required this.userName,
+    required this.userId,
+    required this.userToken,
   }) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<Map<String, dynamic>> goalDataList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDataGoals();
+  }
+
+  void fetchDataGoals() async {
+    final response = await http.get(Uri.parse(
+        'https://taskwise-backend.cyclic.cloud/goals/${widget.userId}'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> dataList = json.decode(response.body);
+
+      goalDataList.clear();
+
+      for (var data in dataList) {
+        if (data is Map<String, dynamic>) {
+          List<dynamic>? tasks = data['tasks'];
+
+          String formattedDate = '';
+          if (data['data_vencimento'] != null) {
+            formattedDate = DateFormat('dd/MM/yyyy HH:mm')
+                .format(DateTime.parse(data['data_vencimento']));
+          }
+
+          goalDataList.add({
+            'titulo': data['titulo'] ?? '',
+          });
+        }
+      }
+
+      setState(() {});
+    } else {
+      print('Erro na requisição: ${response.statusCode}');
+    }
+  }
 
   Widget buildProfileSection() {
     return Row(
@@ -30,7 +82,7 @@ class HomePage extends StatelessWidget {
 
   Widget buildGreetingText() {
     return Text(
-      'Olá, $userName!',
+      'Olá, ${widget.userName}!',
       style: GoogleFonts.poppins(
         fontSize: 20,
         color: Colors.white,
@@ -86,7 +138,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget buildButtonsRow() {
+  Widget buildButtonsRow(BuildContext context) {
     return SizedBox(
       height: 100,
       child: Row(
@@ -100,7 +152,17 @@ class HomePage extends StatelessWidget {
               const Color.fromARGB(255, 0, 71, 178), () {}),
           const SizedBox(width: 18),
           buildButton('Metas', Icons.layers_outlined,
-              const Color.fromARGB(255, 0, 71, 178), () {}),
+              const Color.fromARGB(255, 0, 71, 178), () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyGoals(
+                  userId: widget.userId,
+                  userToken: widget.userToken,
+                ),
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -309,7 +371,7 @@ class HomePage extends StatelessWidget {
                   topRight: Radius.circular(35),
                 ),
               ),
-              child: buildButtonsRow(),
+              child: buildButtonsRow(context),
             ),
             Container(
               color: Colors.white, // Cor do fundo branco

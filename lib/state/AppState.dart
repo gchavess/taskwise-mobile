@@ -1,12 +1,14 @@
 import 'package:flutter/foundation.dart';
 
-class AppProviderState with ChangeNotifier {
+class AppState with ChangeNotifier {
   String _userName = '';
-
-  String get userName => _userName;
 
   void setUserName(String name) {
     _userName = name;
     notifyListeners();
+  }
+
+  String getUserName() {
+    return _userName;
   }
 }

@@ -50,14 +50,13 @@ class _LoginPageState extends State<LoginPage> {
           );
 
           if (response.statusCode == 200) {
-            final appState = Provider.of<AppState>(context, listen: false);
-            appState.setResponseData(response.data['user']['nome'].toString());
-
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => HomePage(
                   userName: response.data['user']['nome'].toString(),
+                  userId: response.data['user']['id'].toString(),
+                  userToken: response.data['user']['token'].toString(),
                 ),
               ),
             );

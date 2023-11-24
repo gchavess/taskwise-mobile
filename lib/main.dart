@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:task_wise_frontend/providers/app_state.dart';
+import 'package:provider/provider.dart';
+import 'package:task_wise_frontend/providers/app_state.dart'; // Importa diretamente
+
 import 'package:task_wise_frontend/screens/goals/create_goals.dart';
 import 'package:task_wise_frontend/screens/goals/my_goals.dart';
 import 'package:task_wise_frontend/screens/home/home.dart';
 import 'package:task_wise_frontend/screens/login/login_screen.dart';
-import 'package:provider/provider.dart';
 import 'package:task_wise_frontend/screens/login/splash_screen.dart';
 import 'package:task_wise_frontend/screens/pomodoro/my_pomodoro.dart';
 
@@ -22,11 +23,11 @@ class MainApp extends StatelessWidget {
         const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
     return ChangeNotifierProvider(
-      create: (context) => AppState(),
-      child: const MaterialApp(
+      create: (context) => AppProviderState(), // Use o nome correto aqui
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Task Wise',
-        home: SplashScreen()
+        home: SplashScreen(),
       ),
     );
   }

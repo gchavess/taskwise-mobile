@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:task_wise_frontend/screens/goals/create_goals.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class MyGoals extends StatefulWidget {
-  const MyGoals({Key? key}) : super(key: key);
+  final String userId;
+  final String userToken;
+
+  const MyGoals({
+    Key? key,
+    required this.userId,
+    required this.userToken,
+  }) : super(key: key);
 
   @override
   _MyGoalsState createState() => _MyGoalsState();
@@ -10,6 +20,8 @@ class MyGoals extends StatefulWidget {
 
 class _MyGoalsState extends State<MyGoals> {
   final bool _isExpanded = false;
+
+  List<Map<String, dynamic>> goalDataList = [];
 
   final TextEditingController _taskNameController = TextEditingController();
   final TextEditingController _expirationController = TextEditingController();
@@ -19,6 +31,51 @@ class _MyGoalsState extends State<MyGoals> {
     _taskNameController.dispose();
     _expirationController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDataGoals();
+  }
+
+  void fetchDataGoals() async {
+    final response = await http.get(Uri.parse(
+        'https://taskwise-backend.cyclic.cloud/goals/${widget.userId}'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> dataList = json.decode(response.body);
+
+      goalDataList.clear();
+
+      for (var data in dataList) {
+        if (data is Map<String, dynamic>) {
+          List<dynamic>? tasks = data['tasks'];
+
+          String formattedDate = '';
+          if (data['data_vencimento'] != null) {
+            formattedDate = DateFormat('dd/MM/yyyy HH:mm')
+                .format(DateTime.parse(data['data_vencimento']));
+          }
+
+          List<Map<String, dynamic>> tasksList = [];
+
+          if (tasks != null) {
+            tasksList = List<Map<String, dynamic>>.from(tasks);
+          }
+
+          goalDataList.add({
+            'titulo': data['titulo'] ?? '',
+            'data_vencimento': formattedDate,
+            'tasks': tasksList,
+          });
+        }
+      }
+
+      setState(() {});
+    } else {
+      print('Erro na requisição: ${response.statusCode}');
+    }
   }
 
   // Função para gerar o ListTile com PopupMenuButton
@@ -32,11 +89,13 @@ class _MyGoalsState extends State<MyGoals> {
       child: ListTile(
         title: Text(
           title,
-          style: const TextStyle(color: Colors.white), // Define a cor do título como branco
+          style: const TextStyle(
+              color: Colors.white), // Define a cor do título como branco
         ),
         subtitle: Text(
           subtitle,
-          style: const TextStyle(color: Colors.white), // Define a cor do subtítulo como branco
+          style: const TextStyle(
+              color: Colors.white), // Define a cor do subtítulo como branco
         ),
         trailing: PopupMenuButton<String>(
           onSelected: (String value) {
@@ -52,14 +111,20 @@ class _MyGoalsState extends State<MyGoals> {
               value: 'editar',
               child: ListTile(
                 leading: Icon(Icons.edit),
-                title: Text('Editar', style: TextStyle(color: Color.fromARGB(255, 15, 15, 15))), // Define a cor do texto como branco
+                title: Text('Editar',
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 15, 15,
+                            15))), // Define a cor do texto como branco
               ),
             ),
             const PopupMenuItem<String>(
               value: 'excluir',
               child: ListTile(
                 leading: Icon(Icons.delete),
-                title: Text('Excluir', style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))), // Define a cor do texto como branco
+                title: Text('Excluir',
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 0, 0,
+                            0))), // Define a cor do texto como branco
               ),
             ),
           ],
@@ -97,10 +162,12 @@ class _MyGoalsState extends State<MyGoals> {
                         ),
                         IconButton(
                           onPressed: () {
-                            Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => const CreateGoals()),
-                              );
-                            },
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CreateGoals()),
+                            );
+                          },
                           icon: const Icon(Icons.add),
                           iconSize: 35,
                         ),
@@ -110,10 +177,9 @@ class _MyGoalsState extends State<MyGoals> {
                       height: 20.0,
                     ),
                     // Cartões estáticos com menu de opções
-                    buildListTileWithPopupMenu('Meta 1',''),
-                    buildListTileWithPopupMenu('meta 2',''),
-                    buildListTileWithPopupMenu('Meta 3',''),
-                    buildListTileWithPopupMenu('Meta 4',''),
+                    for (var goalData in goalDataList)
+                      buildListTileWithPopupMenu(goalData['titulo'] ?? '',
+                          goalData['data_vencimento'] ?? ''),
                     // ... (código dos outros cartões estáticos com menu de opções)
                     // Fim dos cartões estáticos
                     const SizedBox(height: 20.0),
