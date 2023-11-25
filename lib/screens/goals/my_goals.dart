@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:task_wise_frontend/screens/goals/create_goals.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:intl/intl.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:flutter/services.dart';
 
 class MyGoals extends StatefulWidget {
   final String userId;
@@ -19,7 +19,8 @@ class MyGoals extends StatefulWidget {
 }
 
 class _MyGoalsState extends State<MyGoals> {
-  final bool _isExpanded = false;
+  Color inputDetailColor = Color(0xFF0047B2);
+  Color textColor = Color.fromARGB(255, 63, 63, 63);
 
   List<Map<String, dynamic>> goalDataList = [];
 
@@ -52,12 +53,6 @@ class _MyGoalsState extends State<MyGoals> {
         if (data is Map<String, dynamic>) {
           List<dynamic>? tasks = data['tasks'];
 
-          String formattedDate = '';
-          if (data['data_vencimento'] != null) {
-            formattedDate = DateFormat('dd/MM/yyyy HH:mm')
-                .format(DateTime.parse(data['data_vencimento']));
-          }
-
           List<Map<String, dynamic>> tasksList = [];
 
           if (tasks != null) {
@@ -65,15 +60,15 @@ class _MyGoalsState extends State<MyGoals> {
           }
 
           goalDataList.add({
+            'id': data['id'] ?? '',
             'titulo': data['titulo'] ?? '',
-            'data_vencimento': formattedDate,
+            'data_vencimento': data['data_vencimento'] ?? '',
             'totalTarefa': data['totalTasks'] ?? '',
             'totalTarefaConcluida': data['tasksConcluidoTrue'] ?? '',
             'tasks': tasksList,
           });
         }
       }
-
       setState(() {});
     } else {
       print('Erro na requisição: ${response.statusCode}');
@@ -82,7 +77,7 @@ class _MyGoalsState extends State<MyGoals> {
 
   // Função para gerar o ListTile com PopupMenuButton
   Widget buildListTileWithPopupMenu(String title, String subtitle,
-      int totalTarefa, int totalTarefaConcluida) {
+      int totalTarefa, int totalTarefaConcluida, String id) {
     return Card(
       elevation: 7,
       color: const Color.fromARGB(255, 0, 71, 178),
@@ -114,9 +109,9 @@ class _MyGoalsState extends State<MyGoals> {
           onSelected: (String value) {
             // Lógica para editar ou excluir a tarefa de acordo com a opção selecionada
             if (value == 'editar') {
-              // Adicionar a lógica de edição aqui
+              _editarCriar('editar', context, id, title, subtitle);
             } else if (value == 'excluir') {
-              // Adicionar a lógica de exclusão aqui
+              _confirmarExclusao(context, id);
             }
           },
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -125,9 +120,7 @@ class _MyGoalsState extends State<MyGoals> {
               child: ListTile(
                 leading: Icon(Icons.edit),
                 title: Text('Editar',
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 15, 15,
-                            15))), // Define a cor do texto como branco
+                    style: TextStyle(color: Color.fromARGB(255, 15, 15, 15))),
               ),
             ),
             const PopupMenuItem<String>(
@@ -135,9 +128,7 @@ class _MyGoalsState extends State<MyGoals> {
               child: ListTile(
                 leading: Icon(Icons.delete),
                 title: Text('Excluir',
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 0, 0,
-                            0))), // Define a cor do texto como branco
+                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
               ),
             ),
           ],
@@ -175,11 +166,7 @@ class _MyGoalsState extends State<MyGoals> {
                         ),
                         IconButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const CreateGoals()),
-                            );
+                            _editarCriar('criar', context, '', '', '');
                           },
                           icon: const Icon(Icons.add),
                           iconSize: 35,
@@ -189,15 +176,13 @@ class _MyGoalsState extends State<MyGoals> {
                     const SizedBox(
                       height: 20.0,
                     ),
-                    // Cartões estáticos com menu de opções
                     for (var goalData in goalDataList)
                       buildListTileWithPopupMenu(
                           goalData['titulo'] ?? '',
                           goalData['data_vencimento'] ?? '',
                           goalData['totalTarefa'] ?? '',
-                          goalData['totalTarefaConcluida'] ?? ''),
-                    // ... (código dos outros cartões estáticos com menu de opções)
-                    // Fim dos cartões estáticos
+                          goalData['totalTarefaConcluida'] ?? '',
+                          goalData['id'] ?? ''),
                     const SizedBox(height: 20.0),
                   ],
                 ),
@@ -206,6 +191,207 @@ class _MyGoalsState extends State<MyGoals> {
           ),
         ],
       ),
+    );
+  }
+
+  void _editarCriar(String acao, BuildContext context, String? id,
+      String? titulo, String? dataVencimento) {
+    var dateMaskFormatter = MaskTextInputFormatter(
+      mask: '##/##/####',
+      filter: {"#": RegExp(r'[0-9]')},
+    );
+
+    if (titulo != null) {
+      _taskNameController.text = titulo;
+    } else {
+      _taskNameController.text = '';
+    }
+
+    if (dataVencimento != null) {
+      _expirationController.text = dataVencimento;
+    } else {
+      _expirationController.text = '';
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Editar Meta'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildRoundedTextField(
+                controller: _taskNameController,
+                labelText: 'Nome da Meta',
+                detailColor: inputDetailColor,
+              ),
+              SizedBox(height: 20),
+              _buildRoundedTextField(
+                controller: _expirationController,
+                labelText: 'Data de Vencimento',
+                detailColor: inputDetailColor,
+                inputFormatters: [dateMaskFormatter],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancelar'),
+              style: TextButton.styleFrom(
+                primary: inputDetailColor, // Cor do texto do botão
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                if (acao == 'editar') {
+                  _editarMeta(id);
+                } else {
+                  _criarMeta();
+                }
+              },
+              style: TextButton.styleFrom(
+                primary: inputDetailColor, // Cor do texto do botão
+              ),
+              child: Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _confirmarExclusao(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmar exclusão'),
+          content: Text('Tem certeza de que deseja excluir esta meta?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: TextButton.styleFrom(
+                primary: inputDetailColor, // Cor do texto do botão
+              ),
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _excluirMeta(id);
+              },
+              style: TextButton.styleFrom(
+                primary: inputDetailColor, // Cor do texto do botão
+              ),
+              child: Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _excluirMeta(String id) async {
+    final response = await http.delete(
+      Uri.parse('https://taskwise-backend.cyclic.cloud/goals/$id'),
+    );
+
+    print(id);
+    if (response.statusCode == 200) {
+      fetchDataGoals();
+    } else {
+      print('Erro na exclusão: ${response.statusCode}');
+    }
+  }
+
+  void _criarMeta() async {
+    final String taskName = _taskNameController.text;
+    final String expirationDate = _expirationController.text;
+
+    final Map<String, dynamic> data = {
+      'titulo': taskName,
+      'data_vencimento': expirationDate,
+      'userId': widget.userId,
+    };
+
+    print(data);
+
+    final response = await http.post(
+      Uri.parse('https://taskwise-backend.cyclic.cloud/goals'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 201) {
+      fetchDataGoals();
+    } else {
+      print('Erro no edit: ${response.statusCode}');
+    }
+  }
+
+  void _editarMeta(String? id) async {
+    final String taskName = _taskNameController.text;
+    final String expirationDate = _expirationController.text;
+
+    final Map<String, dynamic> data = {
+      'titulo': taskName,
+      'data_vencimento': expirationDate,
+    };
+
+    print(jsonEncode(data));
+
+    final response = await http.put(
+      Uri.parse('https://taskwise-backend.cyclic.cloud/goals/$id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+      fetchDataGoals();
+    } else {
+      print('Erro no edit: ${response.statusCode}');
+    }
+  }
+
+  Widget _buildRoundedTextField({
+    required TextEditingController? controller,
+    required String labelText,
+    bool isPassword = false,
+    required Color detailColor,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
+    return TextFormField(
+      controller: controller,
+      inputFormatters: inputFormatters,
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: textColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6.0),
+          borderSide: BorderSide(color: detailColor),
+        ),
+      ),
+      obscureText: isPassword,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a valid $labelText';
+        }
+        return null;
+      },
     );
   }
 }

@@ -154,7 +154,9 @@ class _HomePageState extends State<HomePage> {
                   userToken: widget.userToken,
                 ),
               ),
-            );
+            ).then((_) {
+              fetchDataGoals();
+            });
           }),
         ],
       ),
