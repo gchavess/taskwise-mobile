@@ -67,6 +67,8 @@ class _MyGoalsState extends State<MyGoals> {
           goalDataList.add({
             'titulo': data['titulo'] ?? '',
             'data_vencimento': formattedDate,
+            'totalTarefa': data['totalTasks'] ?? '',
+            'totalTarefaConcluida': data['tasksConcluidoTrue'] ?? '',
             'tasks': tasksList,
           });
         }
@@ -79,7 +81,8 @@ class _MyGoalsState extends State<MyGoals> {
   }
 
   // Função para gerar o ListTile com PopupMenuButton
-  Widget buildListTileWithPopupMenu(String title, String subtitle) {
+  Widget buildListTileWithPopupMenu(String title, String subtitle,
+      int totalTarefa, int totalTarefaConcluida) {
     return Card(
       elevation: 7,
       color: const Color.fromARGB(255, 0, 71, 178),
@@ -87,10 +90,20 @@ class _MyGoalsState extends State<MyGoals> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: ListTile(
-        title: Text(
-          title,
-          style: const TextStyle(
-              color: Colors.white), // Define a cor do título como branco
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                  color: Colors.white), // Define a cor do título como branco
+            ),
+            Text(
+              '$totalTarefaConcluida de $totalTarefa', // Adiciona o total de tarefas ao lado do título
+              style: const TextStyle(
+                  color: Colors.white), // Define a cor do total como branco
+            ),
+          ],
         ),
         subtitle: Text(
           subtitle,
@@ -178,8 +191,11 @@ class _MyGoalsState extends State<MyGoals> {
                     ),
                     // Cartões estáticos com menu de opções
                     for (var goalData in goalDataList)
-                      buildListTileWithPopupMenu(goalData['titulo'] ?? '',
-                          goalData['data_vencimento'] ?? ''),
+                      buildListTileWithPopupMenu(
+                          goalData['titulo'] ?? '',
+                          goalData['data_vencimento'] ?? '',
+                          goalData['totalTarefa'] ?? '',
+                          goalData['totalTarefaConcluida'] ?? ''),
                     // ... (código dos outros cartões estáticos com menu de opções)
                     // Fim dos cartões estáticos
                     const SizedBox(height: 20.0),
