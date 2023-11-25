@@ -41,20 +41,13 @@ class _HomePageState extends State<HomePage> {
 
       for (var data in dataList) {
         if (data is Map<String, dynamic>) {
-          List<dynamic>? tasks = data['tasks'];
-
-          String formattedDate = '';
-          if (data['data_vencimento'] != null) {
-            formattedDate = DateFormat('dd/MM/yyyy HH:mm')
-                .format(DateTime.parse(data['data_vencimento']));
-          }
-
           goalDataList.add({
             'titulo': data['titulo'] ?? '',
+            'totalTarefa': data['totalTasks'] ?? '',
+            'totalTarefaConcluida': data['tasksConcluidoTrue'] ?? ''
           });
         }
       }
-
       setState(() {});
     } else {
       print('Erro na requisição: ${response.statusCode}');
@@ -194,38 +187,46 @@ class _HomePageState extends State<HomePage> {
               child: Text(
                 'Metas',
                 style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    color: const Color.fromARGB(255, 45, 45, 45),
-                    fontWeight: FontWeight.bold),
+                  fontSize: 20,
+                  color: const Color.fromARGB(255, 45, 45, 45),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(height: 7),
             SizedBox(
-              height: 100,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  buildInkWell('Meta 01',
-                      const Color.fromARGB(255, 255, 88, 88), '1 de 1'),
-                  buildInkWell('Meta 02',
-                      const Color.fromARGB(255, 30, 214, 255), '1 de 1'),
-                  buildInkWell('Meta 03', const Color.fromARGB(255, 0, 163, 36),
-                      '1 de 1'),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 100,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  buildInkWell('Meta 04', const Color.fromARGB(255, 66, 66, 66),
-                      '1 de 1'),
-                  buildInkWell('Meta 05',
-                      const Color.fromARGB(255, 255, 175, 54), '1 de 1'),
-                  buildInkWell('Meta 06',
-                      const Color.fromARGB(255, 165, 0, 148), '1 de 1'),
-                ],
+              height: 200, // Adjust the height as necessary
+              child: ListView.builder(
+                scrollDirection: Axis.vertical, // Change to vertical
+                itemCount: (goalDataList.length / 3).ceil(),
+                itemBuilder: (context, index) {
+                  int startIndex = index * 3;
+                  int endIndex = (index + 1) * 3;
+                  if (endIndex > goalDataList.length) {
+                    endIndex = goalDataList.length;
+                  }
+
+                  List<Widget> rowWidgets = [];
+
+                  for (int i = startIndex; i < endIndex; i++) {
+                    rowWidgets.add(
+                      buildInkWell(
+                        goalDataList[i]['titulo'],
+                        const Color.fromARGB(255, 0, 163, 36),
+                        '${goalDataList[i]['totalTarefaConcluida']} de ${goalDataList[i]['totalTarefa']}',
+                      ),
+                    );
+                  }
+                  return Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: rowWidgets,
+                      ),
+                      const SizedBox(height: 10), // Adjust spacing as needed
+                    ],
+                  );
+                },
               ),
             ),
           ],
@@ -240,7 +241,7 @@ class _HomePageState extends State<HomePage> {
         // Lidar com o toque no InkWell
       },
       child: Container(
-        width: 88,
+        width: 108,
         height: 88,
         decoration: BoxDecoration(
           color: color,
