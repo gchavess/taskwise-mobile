@@ -3,10 +3,12 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:flutter/services.dart';
+import 'package:task_wise_frontend/screens/goals/create_goals.dart';
 
 class MyGoals extends StatefulWidget {
   final String userId;
   final String userToken;
+  final bool isPopupMenuShowing = false;
 
   const MyGoals({
     Key? key,
@@ -27,6 +29,10 @@ class _MyGoalsState extends State<MyGoals> {
   final TextEditingController _taskNameController = TextEditingController();
   final TextEditingController _expirationController = TextEditingController();
 
+  void refreshData() {
+    fetchDataGoals();
+  }
+
   @override
   void dispose() {
     _taskNameController.dispose();
@@ -37,7 +43,14 @@ class _MyGoalsState extends State<MyGoals> {
   @override
   void initState() {
     super.initState();
+
+    // Fetch data when the screen is first loaded
     fetchDataGoals();
+
+    // Add a post-frame callback to fetch data whenever the screen comes into focus
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      fetchDataGoals();
+    });
   }
 
   void fetchDataGoals() async {
@@ -78,118 +91,152 @@ class _MyGoalsState extends State<MyGoals> {
   // Função para gerar o ListTile com PopupMenuButton
   Widget buildListTileWithPopupMenu(String title, String subtitle,
       int totalTarefa, int totalTarefaConcluida, String id) {
-    return Card(
-      elevation: 7,
-      color: const Color.fromARGB(255, 0, 71, 178),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: ListTile(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                  color: Colors.white), // Define a cor do título como branco
+    return Builder(
+      builder: (BuildContext context) {
+        return Card(
+          elevation: 7,
+          color: const Color.fromARGB(255, 0, 71, 178),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: ListTile(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  '$totalTarefaConcluida de $totalTarefa',
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              '$totalTarefaConcluida de $totalTarefa', // Adiciona o total de tarefas ao lado do título
+            subtitle: Text(
+              subtitle,
               style: const TextStyle(
-                  color: Colors.white), // Define a cor do total como branco
-            ),
-          ],
-        ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(
-              color: Colors.white), // Define a cor do subtítulo como branco
-        ),
-        trailing: PopupMenuButton<String>(
-          onSelected: (String value) {
-            // Lógica para editar ou excluir a tarefa de acordo com a opção selecionada
-            if (value == 'editar') {
-              _editarCriar('editar', context, id, title, subtitle);
-            } else if (value == 'excluir') {
-              _confirmarExclusao(context, id);
-            }
-          },
-          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-            const PopupMenuItem<String>(
-              value: 'editar',
-              child: ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Editar',
-                    style: TextStyle(color: Color.fromARGB(255, 15, 15, 15))),
+                color: Colors.white,
               ),
             ),
-            const PopupMenuItem<String>(
-              value: 'excluir',
-              child: ListTile(
-                leading: Icon(Icons.delete),
-                title: Text('Excluir',
-                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
-              ),
+            trailing: PopupMenuButton<String>(
+              onSelected: (String value) {
+                if (value == 'editar') {
+                  _editarCriar('editar', context, id, title, subtitle);
+                } else if (value == 'excluir') {
+                  _confirmarExclusao(context, id);
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'editar',
+                  child: ListTile(
+                    leading: Icon(Icons.edit),
+                    title: Text(
+                      'Editar',
+                      style: TextStyle(color: Color.fromARGB(255, 15, 15, 15)),
+                    ),
+                  ),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'excluir',
+                  child: ListTile(
+                    leading: Icon(Icons.delete),
+                    title: Text(
+                      'Excluir',
+                      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+            onTap: () {
+              if (!Scaffold.of(context).isEndDrawerOpen) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateGoals(
+                      goalId: id,
+                      onScreenClosed: () {
+                        // Este é o callback que será chamado quando CreateGoals for fechada
+                        fetchDataGoals();
+                      },
+                    ),
+                  ),
+                );
+              }
+            },
+          ),
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          ListView(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          onPressed: () => Navigator.of(context).pop(null),
-                          icon: const Icon(Icons.arrow_back_ios),
-                          iconSize: 30,
-                        ),
-                        const Text(
-                          'Minhas Metas',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async {
+        // Trigger fetchDataGoals when the user presses the back button
+        fetchDataGoals();
+        return true; // Allow the pop to happen
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            ListView(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            onPressed: () => Navigator.of(context).pop(null),
+                            icon: const Icon(Icons.arrow_back_ios),
+                            iconSize: 30,
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            _editarCriar('criar', context, '', '', '');
-                          },
-                          icon: const Icon(Icons.add),
-                          iconSize: 35,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
-                    for (var goalData in goalDataList)
-                      buildListTileWithPopupMenu(
+                          const Text(
+                            'Minhas Metas',
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              _editarCriar('criar', context, '', '', '');
+                            },
+                            icon: const Icon(Icons.add),
+                            iconSize: 35,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20.0,
+                      ),
+                      for (var goalData in goalDataList)
+                        buildListTileWithPopupMenu(
                           goalData['titulo'] ?? '',
                           goalData['data_vencimento'] ?? '',
                           goalData['totalTarefa'] ?? '',
                           goalData['totalTarefaConcluida'] ?? '',
-                          goalData['id'] ?? ''),
-                    const SizedBox(height: 20.0),
-                  ],
+                          goalData['id'] ?? '',
+                        ),
+                      const SizedBox(height: 20.0),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -320,8 +367,6 @@ class _MyGoalsState extends State<MyGoals> {
       'data_vencimento': expirationDate,
       'userId': widget.userId,
     };
-
-    print(data);
 
     final response = await http.post(
       Uri.parse('https://taskwise-backend.cyclic.cloud/goals'),
