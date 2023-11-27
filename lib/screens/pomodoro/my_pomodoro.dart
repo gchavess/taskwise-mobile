@@ -36,7 +36,7 @@ class MyPomodoro extends StatelessWidget {
                 ),
               ],
             ),
-            const TimerWidget(durationInSeconds: 25 * 60), // 25 minutos em segundos
+            TimerWidget(durationInSeconds: 25 * 60), // 25 minutos em segundos
           ],
         ),
       ),
@@ -59,6 +59,10 @@ class _TimerWidgetState extends State<TimerWidget>
   late Animation<double> _animation;
   late int _currentTime;
   bool _isPaused = false;
+  Timer? _timer;
+
+  bool _isCountingDown = false;
+  int _countDownDuration = 5 * 60;
 
   @override
   void initState() {
@@ -79,17 +83,43 @@ class _TimerWidgetState extends State<TimerWidget>
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         // Timer completed
+        setState(() {
+          _isCountingDown = true;
+          _currentTime = _countDownDuration;
+        });
+        _startCountDown();
       }
     });
     const oneSec = Duration(seconds: 1);
-    Timer.periodic(oneSec, (timer) {
+    _timer = Timer.periodic(oneSec, (timer) {
       setState(() {
         if (!_isPaused) {
           if (_currentTime < 1) {
             timer.cancel();
+            _controller.reset();
+            _controller.forward();
           } else {
             _currentTime--;
             _controller.value = _currentTime / widget.durationInSeconds;
+          }
+        }
+      });
+    });
+  }
+
+  void _startCountDown() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (!_isPaused) {
+          if (_currentTime < 1) {
+            timer.cancel();
+            _isCountingDown = false;
+            _currentTime = widget.durationInSeconds;
+            _controller.reverse(
+              from: _currentTime / widget.durationInSeconds,
+            );
+          } else {
+            _currentTime--;
           }
         }
       });
@@ -105,6 +135,7 @@ class _TimerWidgetState extends State<TimerWidget>
   @override
   void dispose() {
     _controller.dispose();
+    _timer?.cancel(); // Cancela o timer ao descartar o estado
     super.dispose();
   }
 
@@ -113,18 +144,37 @@ class _TimerWidgetState extends State<TimerWidget>
     return Column(
       children: [
         Container(
-          width: 200.0,
-          height: 200.0,
-          child: CustomPaint(
-            painter: TimerPainter(
-              percentage: _animation.value,
+          width: 300.0,
+          height: 300.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(width: 10.0,  
+            color: const Color.fromRGBO(58, 59, 59, 0.753),
             ),
-            child: Center(
-              child: Text(
-                timerText,
-                style: const TextStyle(
-                  fontSize: 47.0, // Tamanho do texto aumentado para 47
-                  fontWeight: FontWeight.w700, // Texto em negrito para aumentar o peso
+          ),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: CustomPaint(
+                painter: TimerPainter(
+                  percentage: _isCountingDown
+                      ? 1 - (_currentTime / _countDownDuration)
+                      : _animation.value,
+                ),
+                child: Center(
+                  child: FittedBox(
+                    fit: BoxFit.contain,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        timerText,
+                        style: const TextStyle(
+                          fontSize: 47.0,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -212,7 +262,9 @@ class _TimerWidgetState extends State<TimerWidget>
     _isPaused = true;
     setState(() {
       _currentTime = widget.durationInSeconds;
+      _controller.reset(); // Reinicia o AnimationController ao cancelar
     });
+    _timer?.cancel(); // Cancela o timer ao cancelar
   }
 }
 
@@ -224,13 +276,13 @@ class TimerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.grey // Definindo a cor do círculo cinza
+      ..color = Colors.grey
       ..strokeWidth = 10.0
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
     Paint progressPaint = Paint()
-      ..color = const Color.fromARGB(255, 0, 71, 178) // Cor da linha de progresso
+      ..color = const Color.fromARGB(255, 0, 71, 178)
       ..strokeWidth = 10.0
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
@@ -238,14 +290,14 @@ class TimerPainter extends CustomPainter {
     Offset center = Offset(size.width / 2, size.height / 2);
     double radius = size.width / 2;
 
-    canvas.drawCircle(center, radius, paint); // Desenhar o círculo cinza
+    canvas.drawCircle(center, radius, paint);
 
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       -90 * (3.1415926535897932 / 180),
       3.1415926535897932 * 2 * percentage,
       false,
-      progressPaint, // Desenhar a linha de progresso com a cor definida
+      progressPaint,
     );
   }
 
