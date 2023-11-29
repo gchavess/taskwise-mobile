@@ -6,10 +6,14 @@ import 'package:flutter/services.dart';
 
 class CreateGoals extends StatefulWidget {
   final String goalId;
+  final String userId;
   final Function onScreenClosed;
 
   const CreateGoals(
-      {Key? key, required this.goalId, required this.onScreenClosed})
+      {Key? key,
+      required this.goalId,
+      required this.userId,
+      required this.onScreenClosed})
       : super(key: key);
 
   @override
@@ -101,7 +105,9 @@ class _CreateGoalsState extends State<CreateGoals> {
             } else if (value == 'excluir') {
               _confirmarExclusao(context, id);
             } else if (value == 'concluir' && !concluido) {
-              _confirmarConcluir(context, id);
+              _confirmarConcluir(context, id, false);
+            } else if (value == 'cancelarConclusao' && concluido) {
+              _confirmarConcluir(context, id, true);
             }
           },
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -119,6 +125,14 @@ class _CreateGoalsState extends State<CreateGoals> {
                 title: Text('Excluir'),
               ),
             ),
+            if (concluido) // Adicionar este bloco apenas se concluído for falso
+              const PopupMenuItem<String>(
+                value: 'cancelarConclusao',
+                child: ListTile(
+                  leading: Icon(Icons.check),
+                  title: Text('Cancelar Conclusão'),
+                ),
+              ),
             if (!concluido) // Adicionar este bloco apenas se concluído for falso
               const PopupMenuItem<String>(
                 value: 'concluir',
@@ -204,13 +218,18 @@ class _CreateGoalsState extends State<CreateGoals> {
     );
   }
 
-  void _confirmarConcluir(BuildContext context, String id) {
+  void _confirmarConcluir(BuildContext context, String id, bool concluido) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmar conclusão'),
-          content: Text('Tem certeza de que deseja concluir esta Tarefa?'),
+          title: !concluido
+              ? Text('Confirmar conclusão')
+              : Text('Cancelar conclusão'),
+          content: !concluido
+              ? Text('Tem certeza de que deseja concluir esta Tarefa?')
+              : Text(
+                  'Tem certeza de que deseja cancelar conclusão desta Tarefa?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -224,7 +243,7 @@ class _CreateGoalsState extends State<CreateGoals> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _concluirTarefa(id);
+                _concluirTarefa(id, concluido);
               },
               style: TextButton.styleFrom(
                 primary: inputDetailColor, // Cor do texto do botão
@@ -283,9 +302,9 @@ class _CreateGoalsState extends State<CreateGoals> {
     }
   }
 
-  void _concluirTarefa(String? id) async {
+  void _concluirTarefa(String? id, bool concluido) async {
     final Map<String, dynamic> data = {
-      'concluido': true,
+      'concluido': concluido ? "" : true,
     };
 
     final response = await http.put(
@@ -311,6 +330,7 @@ class _CreateGoalsState extends State<CreateGoals> {
       'titulo': taskName,
       'hora_fim': expirationDate,
       'goalId': widget.goalId,
+      'userId': widget.userId,
     };
 
     final response = await http.post(

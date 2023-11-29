@@ -27,16 +27,24 @@ class MyPomodoro extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                IconButton(
-                  onPressed: () {
-                    // Adicione o código para iniciar o cronômetro aqui
-                  },
-                  icon: const Icon(Icons.add),
-                  iconSize: 45,
-                ),
+                Visibility(
+                  visible: false,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.add),
+                    iconSize: 45,
+                  ),
+                )
               ],
             ),
-            TimerWidget(durationInSeconds: 25 * 60), // 25 minutos em segundos
+            SizedBox(height: 120),
+            Expanded(
+              child: Align(
+                alignment: Alignment.center,
+                child: TimerWidget(
+                    durationInSeconds: 25 * 60), // 25 minutos em segundos
+              ),
+            ),
           ],
         ),
       ),
@@ -148,8 +156,9 @@ class _TimerWidgetState extends State<TimerWidget>
           height: 300.0,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(width: 10.0,  
-            color: const Color.fromRGBO(58, 59, 59, 0.753),
+            border: Border.all(
+              width: 10.0,
+              color: const Color.fromRGBO(58, 59, 59, 0.753),
             ),
           ),
           child: Center(
@@ -242,14 +251,20 @@ class _TimerWidgetState extends State<TimerWidget>
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              style: TextButton.styleFrom(
+                primary: Color(0xFF0047B2), // Cor do texto do botão
+              ),
               child: const Text('Cancelar'),
             ),
-            ElevatedButton(
+            TextButton(
               onPressed: () {
                 _isPaused = false;
                 startTimer();
                 Navigator.of(context).pop();
               },
+              style: TextButton.styleFrom(
+                primary: Color(0xFF0047B2), // Cor do texto do botão
+              ),
               child: const Text('Iniciar Timer'),
             ),
           ],

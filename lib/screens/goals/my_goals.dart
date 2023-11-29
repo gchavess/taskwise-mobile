@@ -161,6 +161,7 @@ class _MyGoalsState extends State<MyGoals> {
                   MaterialPageRoute(
                     builder: (context) => CreateGoals(
                       goalId: id,
+                      userId: widget.userId,
                       onScreenClosed: () {
                         // Este é o callback que será chamado quando CreateGoals for fechada
                         fetchDataGoals();

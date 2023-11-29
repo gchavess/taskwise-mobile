@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task_wise_frontend/screens/calendar/calendar.dart';
+import 'package:task_wise_frontend/screens/goals/create_goals.dart';
 import 'package:task_wise_frontend/screens/goals/my_goals.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'package:task_wise_frontend/screens/pomodoro/my_pomodoro.dart';
 
 class HomePage extends StatefulWidget {
   final String userName;
@@ -23,11 +26,54 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> goalDataList = [];
+  List<Map<String, dynamic>> taskDataList = [];
 
   @override
   void initState() {
     super.initState();
     fetchDataGoals();
+    fetchDataTasks();
+  }
+
+  void fetchDataTasks() async {
+    DateTime today = DateTime.now();
+
+    String formattedDate = "${today.day}/${today.month}/${today.year}";
+
+    final Map<String, dynamic> requestBody = {
+      'userId': widget.userId,
+      'data': formattedDate,
+    };
+
+    final String requestBodyJson = json.encode(requestBody);
+
+    final response = await http.post(
+      Uri.parse('https://taskwise-backend.cyclic.cloud/tasks/data'),
+      headers: {'Content-Type': 'application/json'},
+      body: requestBodyJson,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> dataList = json.decode(response.body);
+
+      taskDataList.clear();
+
+      for (var data in dataList) {
+        if (data is Map<String, dynamic>) {
+          taskDataList.add({
+            'goalId': data['goalId'] ?? '',
+            'id': data['id'] ?? '',
+            'titulo': data['titulo'] ?? '',
+            'concluido': data['concluido'] ?? '',
+          });
+        }
+      }
+
+      print(taskDataList);
+      setState(() {});
+    } else {
+      print('Erro na requisição: ${response.statusCode}');
+    }
   }
 
   void fetchDataGoals() async {
@@ -42,6 +88,7 @@ class _HomePageState extends State<HomePage> {
       for (var data in dataList) {
         if (data is Map<String, dynamic>) {
           goalDataList.add({
+            'id': data['id'] ?? '',
             'titulo': data['titulo'] ?? '',
             'totalTarefa': data['totalTasks'] ?? '',
             'totalTarefaConcluida': data['tasksConcluidoTrue'] ?? ''
@@ -139,10 +186,32 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           buildButton('Calendário', Icons.calendar_today_rounded,
-              const Color.fromARGB(255, 0, 71, 178), () {}),
+              const Color.fromARGB(255, 0, 71, 178), () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CalendarPage(
+                  userId: widget.userId,
+                ),
+              ),
+            ).then((_) {
+              fetchDataGoals();
+              fetchDataTasks();
+            });
+          }),
           const SizedBox(width: 18),
           buildButton('Pomodoro', Icons.watch_later_outlined,
-              const Color.fromARGB(255, 0, 71, 178), () {}),
+              const Color.fromARGB(255, 0, 71, 178), () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyPomodoro(),
+              ),
+            ).then((_) {
+              fetchDataGoals();
+              fetchDataTasks();
+            });
+          }),
           const SizedBox(width: 18),
           buildButton('Metas', Icons.layers_outlined,
               const Color.fromARGB(255, 0, 71, 178), () {
@@ -156,6 +225,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ).then((_) {
               fetchDataGoals();
+              fetchDataTasks();
             });
           }),
         ],
@@ -213,8 +283,9 @@ class _HomePageState extends State<HomePage> {
                   for (int i = startIndex; i < endIndex; i++) {
                     rowWidgets.add(
                       buildInkWell(
+                        goalDataList[i]['id'],
                         goalDataList[i]['titulo'],
-                        const Color.fromARGB(255, 0, 163, 36),
+                        const Color(0xFF0047B2),
                         '${goalDataList[i]['totalTarefaConcluida']} de ${goalDataList[i]['totalTarefa']}',
                       ),
                     );
@@ -237,10 +308,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget buildInkWell(String label, Color color, String progressText) {
+  Widget buildInkWell(
+      String id, String label, Color color, String progressText) {
     return InkWell(
       onTap: () {
-        // Lidar com o toque no InkWell
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateGoals(
+              goalId: id,
+              userId: widget.userId,
+              onScreenClosed: () {
+                fetchDataGoals();
+              },
+            ),
+          ),
+        );
       },
       child: Container(
         width: 108,
@@ -313,27 +396,52 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 1),
-            buildTaskWithCheckbox('Tarefa 1'),
-            buildTaskWithCheckbox('Tarefa 2'),
-            buildTaskWithCheckbox('Tarefa 3'),
+            ...taskDataList.map((task) => buildTaskWithCheckbox(
+                  task['id'],
+                  task['titulo'],
+                  task['concluido'] == "" ? false : true,
+                )),
           ],
         ),
       ),
     );
   }
 
-  Widget buildTaskWithCheckbox(String task) {
-    bool isChecked = false;
+  void desconcluirConcluirTarrefa(String id, bool concluido) async {
+    final Map<String, dynamic> data = {
+      'concluido': concluido ? "" : true,
+    };
+
+    final response = await http.put(
+      Uri.parse('https://taskwise-backend.cyclic.cloud/tasks/$id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+      fetchDataGoals();
+      fetchDataTasks();
+    } else {
+      print('Erro no edit: ${response.statusCode}');
+    }
+  }
+
+  Widget buildTaskWithCheckbox(String id, String titulo, bool concluido) {
+    bool isChecked = concluido;
 
     return Row(
       children: [
         Checkbox(
-          value: isChecked,
-          onChanged: (value) {},
-        ),
+            value: isChecked,
+            onChanged: (value) {
+              desconcluirConcluirTarrefa(id, concluido);
+            },
+            activeColor: const Color.fromARGB(255, 0, 71, 178)),
         const SizedBox(width: 10),
         Text(
-          task,
+          titulo,
           style: const TextStyle(
             fontSize: 16,
             color: Colors.black,

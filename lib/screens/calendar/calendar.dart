@@ -1,21 +1,129 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task_wise_frontend/screens/goals/my_goals.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class CalendarPage extends StatefulWidget {
-  const CalendarPage({super.key});
+  final String userId;
+
+  const CalendarPage({
+    super.key,
+    required this.userId,
+  });
 
   @override
   State<CalendarPage> createState() => _CalendarPageState();
 }
 
 class _CalendarPageState extends State<CalendarPage> {
+  List<Map<String, dynamic>> taskDataList = [];
+  final TextEditingController _taskNameController = TextEditingController();
+  final TextEditingController _expirationController = TextEditingController();
+
+  Color inputDetailColor = Color(0xFF0047B2);
+  Color textColor = Color.fromARGB(255, 63, 63, 63);
+
+  @override
+  void dispose() {
+    _taskNameController.dispose();
+    _expirationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTodayDataTasks();
+  }
+
+  void fetchTodayDataTasks() {
+    DateTime today = DateTime.now();
+
+    String formattedDate = "${today.day}/${today.month}/${today.year}";
+
+    fetchDataTasks(formattedDate);
+  }
+
   DateTime today = DateTime.now();
   void _onDaySelected(DateTime day, DateTime focusedDay) {
     setState(() {
       today = day;
     });
+    String formattedDate = DateFormat('dd/MM/yyyy').format(today);
+
+    fetchDataTasks(formattedDate);
+  }
+
+  Widget _buildRoundedTextField({
+    required TextEditingController? controller,
+    required String labelText,
+    bool isPassword = false,
+    required Color detailColor,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
+    return TextFormField(
+      controller: controller,
+      inputFormatters: inputFormatters,
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: textColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6.0),
+          borderSide: BorderSide(color: detailColor),
+        ),
+      ),
+      obscureText: isPassword,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a valid $labelText';
+        }
+        return null;
+      },
+    );
+  }
+
+  void fetchDataTasks(String? data) async {
+    final Map<String, dynamic> requestBody = {
+      'userId': widget.userId,
+      'data': data,
+    };
+
+    final String requestBodyJson = json.encode(requestBody);
+    print(requestBodyJson);
+    final response = await http.post(
+      Uri.parse('https://taskwise-backend.cyclic.cloud/tasks/data'),
+      headers: {'Content-Type': 'application/json'},
+      body: requestBodyJson,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> dataList = json.decode(response.body);
+
+      taskDataList.clear();
+
+      for (var data in dataList) {
+        if (data is Map<String, dynamic>) {
+          taskDataList.add({
+            'goalId': data['goalId'] ?? '',
+            'id': data['id'] ?? '',
+            'titulo': data['titulo'] ?? '',
+            'concluido': data['concluido'] ?? '',
+            'data_vencimento': data['hora_fim'] ?? '',
+          });
+        }
+      }
+
+      print(taskDataList);
+      setState(() {});
+    } else {
+      print('Erro na requisição: ${response.statusCode}');
+    }
   }
 
   @override
@@ -44,12 +152,13 @@ class _CalendarPageState extends State<CalendarPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          IconButton(
-                            onPressed: () {
-                              // Chaves: Adicionar caminho para a tela de My Goals.
-                            },
-                            icon: const Icon(Icons.add),
-                            iconSize: 35,
+                          Visibility(
+                            visible: false,
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.add),
+                              iconSize: 45,
+                            ),
                           ),
                         ],
                       ),
@@ -58,7 +167,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         margin: const EdgeInsets.only(left: 10),
                         child: Align(
                           alignment: Alignment.topLeft,
-                          child: Text('Hoje',
+                          child: Text('Tarefas do dia ${today.day}',
                               style: GoogleFonts.poppins(
                                   fontSize: 25,
                                   fontWeight: FontWeight.w700,
@@ -66,9 +175,14 @@ class _CalendarPageState extends State<CalendarPage> {
                                       const Color.fromARGB(255, 45, 45, 45))),
                         ),
                       ),
-                      buildTasksRectangle('Tarefa 01'),
+                      for (var task in taskDataList)
+                        buildTasksRectangle(
+                          context,
+                          task['id'] ?? '',
+                          task['titulo'] ?? '',
+                          task['concluido'] == "" ? false : true,
+                        ),
                       const SizedBox(height: 1),
-                      buildTasksRectangle('Tarefa 02')
                     ]))
           ],
         ),
@@ -118,7 +232,8 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 }
 
-Widget buildTasksRectangle(String textTitle) {
+Widget buildTasksRectangle(
+    BuildContext context, String id, String textTitle, bool concluido) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 2),
     child: Container(
@@ -171,10 +286,17 @@ Widget buildTasksRectangle(String textTitle) {
               ),
             ],
           ),
-          const Padding(
-            padding: EdgeInsets.only(right: 10),
-            child: Icon(Icons.more_vert, size: 35),
-          ),
+          if (concluido)
+            const Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: Text(
+                'Concluído',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.green,
+                ),
+              ),
+            ),
         ],
       ),
     ),
