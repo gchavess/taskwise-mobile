@@ -6,9 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:task_wise_frontend/providers/app_state.dart';
 import 'package:flutter/gestures.dart';
 import 'package:task_wise_frontend/screens/login/sign_up_screen.dart';
+import 'package:task_wise_frontend/screens/login/widgets/build_rounded_text_field.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage();
+  const LoginPage({super.key});
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -16,56 +17,54 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController? _usernameController = TextEditingController();
-  TextEditingController? _emailController = TextEditingController();
-  TextEditingController? _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  Color pageDetailColor = Color(0xFF0047B2);
-  Color inputDetailColor = Color(0xFF0047B2);
+  Color pageDetailColor = const Color(0xFF0047B2);
+  Color inputDetailColor = const Color(0xFF0047B2);
   Color textColor =
-      Color.fromARGB(255, 63, 63, 63); // Color for text field details
+      const Color.fromARGB(255, 63, 63, 63); // Color for text field details
 
   void _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
-      final String? email = _emailController?.text;
-      final String? senha = _passwordController?.text;
+      final String email = _emailController.text;
+      final String senha = _passwordController.text;
 
-      if (email != null && senha != null) {
-        Map<String, dynamic> requestBody = {
-          'email': email,
-          'senha': senha,
-        };
+      Map<String, dynamic> requestBody = {
+        'email': email,
+        'senha': senha,
+      };
 
-        Dio dio = Dio();
+      Dio dio = Dio();
 
-        String requestBodyJson = jsonEncode(requestBody);
+      String requestBodyJson = jsonEncode(requestBody);
 
-        try {
-          Response response = await dio.post(
-            'https://taskwise-backend.cyclic.cloud/login',
-            data: requestBodyJson,
-            options: Options(
-              headers: {'Content-Type': 'application/json'},
+      try {
+        Response response = await dio.post(
+          'https://taskwise-backend.cyclic.cloud/login',
+          data: requestBodyJson,
+          options: Options(
+            headers: {'Content-Type': 'application/json'},
+          ),
+        );
+
+        if (response.statusCode == 200) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(
+                userName: response.data['user']['nome'].toString(),
+                userId: response.data['user']['id'].toString(),
+                userToken: response.data['user']['token'].toString(),
+              ),
             ),
           );
-
-          if (response.statusCode == 200) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(
-                  userName: response.data['user']['nome'].toString(),
-                  userId: response.data['user']['id'].toString(),
-                  userToken: response.data['user']['token'].toString(),
-                ),
-              ),
-            );
-          }
-
-          print('Corpo da resposta: ${response.data}');
-        } catch (e) {
-          print('Erro ao fazer a requisição: $e');
         }
+
+        print('Corpo da resposta: ${response.data}');
+      } catch (e) {
+        print('Erro ao fazer a requisição: $e');
       }
     }
   }
@@ -91,13 +90,12 @@ class _LoginPageState extends State<LoginPage> {
                       child: Text(
                         'Entrar no TaskWise', // Text above the email field
                         style: TextStyle(
-                          color: textColor, // Set the text color to pink
-                          fontWeight: FontWeight.bold, // Set the text to bold
-                          fontSize: 22
-                        ),
+                            color: textColor, // Set the text color to pink
+                            fontWeight: FontWeight.bold, // Set the text to bold
+                            fontSize: 22),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                         height:
                             16), // Space between the text and the email field
                     _buildRoundedTextField(
@@ -105,31 +103,37 @@ class _LoginPageState extends State<LoginPage> {
                       labelText: 'E-mail',
                       detailColor: inputDetailColor,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     _buildRoundedTextField(
                       controller: _passwordController,
                       labelText: 'Senha',
                       isPassword: true,
                       detailColor: inputDetailColor,
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Align(
                       alignment:
                           Alignment.centerRight, // Align text to the left
                       child: Text(
                         'Esqueceu sua senha?', // Text above the email field
                         style: TextStyle(
-                          color: inputDetailColor, // Set the text color to pink
-                          fontWeight: FontWeight.bold, // Set the text to bold
-                          fontSize: 16
-                        ),
+                            color:
+                                inputDetailColor, // Set the text color to pink
+                            fontWeight: FontWeight.bold, // Set the text to bold
+                            fontSize: 16),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     ElevatedButton(
                       onPressed: () => _submitForm(context),
-                      child: Container(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: pageDetailColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      child: const SizedBox(
                         width: double
                             .infinity, // Set the button's width to match the parent
                         height:
@@ -144,16 +148,10 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: pageDetailColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                      ),
                     ),
                     Column(
                       children: [
-                        Padding(
+                        const Padding(
                           padding: EdgeInsets.only(
                               top: 110.0), // Adiciona padding-top de 100.0
                           child: Text('Não tem uma conta?'),
@@ -163,9 +161,9 @@ class _LoginPageState extends State<LoginPage> {
                             children: [
                               TextSpan(
                                 text: 'Inscrever-se no Taskwise.',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Color(
-                                      0xFFFF0047B2), // Define a cor do texto como rosa
+                                      0xffff0047b2), // Define a cor do texto como rosa
                                   decoration: TextDecoration
                                       .underline, // Adiciona sublinhado
                                 ),
@@ -175,7 +173,8 @@ class _LoginPageState extends State<LoginPage> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => SignUpPage()),
+                                          builder: (context) =>
+                                              const SignUpPage()),
                                     );
                                   },
                               ),
